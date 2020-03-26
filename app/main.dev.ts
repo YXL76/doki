@@ -58,6 +58,14 @@ const createWindow = async () => {
     show: false,
     width: 1024,
     height: 728,
+    frame: false,
+    center: true,
+    movable: false,
+    closable: false,
+    focusable: false,
+    skipTaskbar: true,
+    titleBarStyle: 'hidden',
+    thickFrame: false,
     webPreferences:
       process.env.NODE_ENV === 'development' || process.env.E2E_BUILD === 'true'
         ? {

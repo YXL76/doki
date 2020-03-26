@@ -103,16 +103,16 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+"
+    "url": "git+https://github.com/YXL76/doki"
   },
   "author": {
-    "name": "YXL-76",
+    "name": "YXL76",
     "email": "chenxin.lan.76@gmail.com",
-    "url": "https://electron-react-boilerplate.js.org"
+    "url": "https://github.com/YXL76"
   },
   "license": "MIT",
   "bugs": {
-    "url": ""
+    "url": "https://github.com/YXL76/doki/issues"
   },
   "keywords": [
     "electron",
