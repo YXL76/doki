@@ -1,16 +1,15 @@
 /* eslint @typescript-eslint/ban-ts-ignore: off */
-import {
-  app,
-  Menu,
-  shell,
-  BrowserWindow,
-  MenuItemConstructorOptions
-} from 'electron';
+import { app, Menu, shell, BrowserWindow } from 'electron';
+/* import fs from 'fs';
+import { getIcon } from 'file-icon-info';
 
-interface DarwinMenuItemConstructorOptions extends MenuItemConstructorOptions {
-  selector?: string;
-  submenu?: DarwinMenuItemConstructorOptions[] | Menu;
-}
+const detail = shell.readShortcutLink(
+  'C:\\ProgramData\\Microsoft\\Windows\\Start Menu\\Programs\\Notepad++.lnk'
+);
+
+getIcon(detail.target, data => {
+  fs.writeFileSync('C:\\Users\\chenx\\Desktop\\test.png', data, 'base64');
+}); */
 
 export default class MenuBuilder {
   mainWindow: BrowserWindow;
@@ -40,7 +39,7 @@ export default class MenuBuilder {
             {
               label: 'Home',
               click: () => {
-                shell.openExternal('');
+                shell.openExternal('https://github.com/YXL76/doki');
               }
             }
           ]
@@ -48,7 +47,7 @@ export default class MenuBuilder {
         {
           label: 'Quit',
           click: () => {
-            app.quit();
+            app.exit();
           }
         }
       ];

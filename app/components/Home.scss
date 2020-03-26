@@ -1,0 +1,48 @@
+.container {
+  background: transparent;
+  height: 100%;
+  width: 100%;
+}
+
+.btn {
+  background: transparent;
+  border: none;
+  margin: 0;
+  padding: 0;
+}
+
+.icon {
+  background: transparent;
+  cursor: pointer;
+  pointer-events: auto;
+}
+
+@-webkit-keyframes clickFeedback {
+  0% {
+    -webkit-transform: translateY(0);
+    transform: translateY(0);
+  }
+  50% {
+    -webkit-transform: translaty(4px);
+    transform: translaty(4px);
+  }
+  100% {
+    -webkit-transform: translateY(0);
+    transform: translateY(0);
+  }
+}
+
+@keyframes clickFeedback {
+  0% {
+    -webkit-transform: translateY(0);
+    transform: translateY(0);
+  }
+  50% {
+    -webkit-transform: translaty(4px);
+    transform: translaty(4px);
+  }
+  100% {
+    -webkit-transform: translateY(0);
+    transform: translateY(0);
+  }
+}

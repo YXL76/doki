@@ -9,7 +9,7 @@
  * `./app/main.prod.js` using webpack. This gives us some performance wins.
  */
 import path from 'path';
-import { app, BrowserWindow } from 'electron';
+import { app, BrowserWindow, screen } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import MenuBuilder from './menu';
@@ -54,16 +54,24 @@ const createWindow = async () => {
     await installExtensions();
   }
 
+  const { width } = screen.getPrimaryDisplay().workAreaSize;
+
   mainWindow = new BrowserWindow({
-    show: false,
     width: 1024,
-    height: 728,
+    height: 50,
+    x: width / 2 - 1024 / 2,
+    y: 32,
     frame: false,
-    center: true,
     movable: false,
     closable: false,
     focusable: false,
+    alwaysOnTop: true,
+    fullscreenable: false,
     skipTaskbar: true,
+    show: false,
+    hasShadow: false,
+    backgroundColor: '#00FFFFFF',
+    transparent: true,
     titleBarStyle: 'hidden',
     thickFrame: false,
     webPreferences:
@@ -88,7 +96,6 @@ const createWindow = async () => {
       mainWindow.minimize();
     } else {
       mainWindow.show();
-      mainWindow.focus();
     }
   });
 
