@@ -23,12 +23,15 @@ export default merge.smart(baseConfig, {
 
   target: 'electron-preload',
 
-  entry: path.join(__dirname, '..', 'app/index.tsx'),
+  entry: {
+    mainWindow: [path.join(__dirname, '..', 'app/mainWindow/index.tsx')],
+    settingWindow: [path.join(__dirname, '..', 'app/settingWindow/index.tsx')]
+  },
 
   output: {
     path: path.join(__dirname, '..', 'app/dist'),
-    publicPath: './dist/',
-    filename: 'renderer.prod.js'
+    publicPath: '../dist/',
+    filename: '[name].renderer.prod.js'
   },
 
   module: {
@@ -210,7 +213,7 @@ export default merge.smart(baseConfig, {
     }),
 
     new MiniCssExtractPlugin({
-      filename: 'style.css'
+      filename: '[name].css'
     }),
 
     new BundleAnalyzerPlugin({

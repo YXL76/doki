@@ -1,0 +1,14 @@
+.root {
+  flex-grow: 1;
+}
+
+.slider {
+  &-width {
+    width: 100%;
+  }
+
+  &-label-width {
+    width: 100px;
+    text-align: center;
+  }
+}

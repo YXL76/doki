@@ -4,14 +4,20 @@ import chalk from 'chalk';
 import fs from 'fs';
 
 const mainPath = path.join(__dirname, '..', '..', 'app', 'main.prod.js');
-const rendererPath = path.join(
-  __dirname,
-  '..',
-  '..',
-  'app',
-  'dist',
-  'renderer.prod.js'
-);
+
+function getRendererPath(name: string) {
+  return path.join(
+    __dirname,
+    '..',
+    '..',
+    'app',
+    'dist',
+    `${name}.renderer.prod.js`
+  );
+}
+
+const mainWindowRendererPath = getRendererPath('mainWindow');
+const settingWindowRendererPath = getRendererPath('settingWindow');
 
 if (!fs.existsSync(mainPath)) {
   throw new Error(
@@ -21,10 +27,18 @@ if (!fs.existsSync(mainPath)) {
   );
 }
 
-if (!fs.existsSync(rendererPath)) {
+if (!fs.existsSync(mainWindowRendererPath)) {
   throw new Error(
     chalk.whiteBright.bgRed.bold(
-      'The renderer process is not built yet. Build it by running "yarn build-renderer"'
+      'The mainWindow renderer process is not built yet. Build it by running "yarn build-renderer"'
+    )
+  );
+}
+
+if (!fs.existsSync(settingWindowRendererPath)) {
+  throw new Error(
+    chalk.whiteBright.bgRed.bold(
+      'The settingWindow renderer process is not built yet. Build it by running "yarn build-renderer"'
     )
   );
 }

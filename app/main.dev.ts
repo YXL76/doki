@@ -23,6 +23,7 @@ export default class AppUpdater {
 }
 
 let mainWindow: BrowserWindow | null = null;
+let settingWindow: BrowserWindow | null = null;
 
 if (process.env.NODE_ENV === 'production') {
   const sourceMapSupport = require('source-map-support');
@@ -59,8 +60,8 @@ const createWindow = async () => {
   mainWindow = new BrowserWindow({
     width: 1024,
     height: 50,
-    x: width / 2 - 1024 / 2,
-    y: 32,
+    x: (width - 1024) / 2,
+    y: 64,
     frame: false,
     movable: false,
     closable: false,
@@ -80,11 +81,30 @@ const createWindow = async () => {
             nodeIntegration: true
           }
         : {
-            preload: path.join(__dirname, 'dist/renderer.prod.js')
+            preload: path.join(__dirname, 'dist/mainWindow.renderer.prod.js')
           }
   });
 
-  mainWindow.loadURL(`file://${__dirname}/app.html`);
+  settingWindow = new BrowserWindow({
+    width: 900,
+    height: 600,
+    fullscreenable: false,
+    show: false,
+    parent: mainWindow,
+    modal: true,
+    autoHideMenuBar: true,
+    webPreferences:
+      process.env.NODE_ENV === 'development' || process.env.E2E_BUILD === 'true'
+        ? {
+            nodeIntegration: true
+          }
+        : {
+            preload: path.join(__dirname, 'dist/settingWindow.renderer.prod.js')
+          }
+  });
+
+  mainWindow.loadURL(`file://${__dirname}/mainWindow/app.html`);
+  settingWindow.loadURL(`file://${__dirname}/settingWindow/app.html`);
 
   // @TODO: Use 'ready-to-show' event
   //        https://github.com/electron/electron/blob/master/docs/api/browser-window.md#using-ready-to-show-event
@@ -99,11 +119,27 @@ const createWindow = async () => {
     }
   });
 
+  settingWindow.webContents.on('did-finish-load', () => {
+    if (!settingWindow) {
+      throw new Error('"settingWindow" is not defined');
+    }
+  });
+
+  settingWindow.on('close', event => {
+    event.preventDefault();
+    settingWindow?.hide();
+  });
+
   mainWindow.on('closed', () => {
+    settingWindow?.destroy();
     mainWindow = null;
   });
 
-  const menuBuilder = new MenuBuilder(mainWindow);
+  settingWindow.on('closed', () => {
+    settingWindow = null;
+  });
+
+  const menuBuilder = new MenuBuilder(mainWindow, settingWindow);
   menuBuilder.buildMenu();
 
   // Remove this if your app does not use auto updates

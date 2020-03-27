@@ -14,15 +14,24 @@ getIcon(detail.target, data => {
 export default class MenuBuilder {
   mainWindow: BrowserWindow;
 
-  constructor(mainWindow: BrowserWindow) {
+  settingWindow: BrowserWindow;
+
+  constructor(mainWindow: BrowserWindow, settingWindow: BrowserWindow) {
     this.mainWindow = mainWindow;
+    this.settingWindow = settingWindow;
   }
 
   buildMenu() {
-    this.buildContextMenu();
+    this.buildMainWindowContextMenu();
+    this.buildSettingWindowContextMenu();
+
+    const menu = Menu.buildFromTemplate([]);
+    Menu.setApplicationMenu(menu);
+
+    return menu;
   }
 
-  buildContextMenu() {
+  buildMainWindowContextMenu() {
     this.mainWindow.webContents.on('context-menu', (_, props) => {
       const { x, y } = props;
 
@@ -30,7 +39,8 @@ export default class MenuBuilder {
         {
           label: 'Settings',
           click: () => {
-            this.mainWindow.webContents.inspectElement(x, y);
+            this.settingWindow.show();
+            this.settingWindow.focus();
           }
         },
         {
@@ -65,6 +75,27 @@ export default class MenuBuilder {
       }
 
       Menu.buildFromTemplate(contextMenu).popup({ window: this.mainWindow });
+    });
+  }
+
+  buildSettingWindowContextMenu() {
+    this.settingWindow.webContents.on('context-menu', (_, props) => {
+      const { x, y } = props;
+
+      const contextMenu =
+        process.env.NODE_ENV === 'development' ||
+        process.env.DEBUG_PROD === 'true'
+          ? [
+              {
+                label: 'Inspect element',
+                click: () => {
+                  this.settingWindow.webContents.inspectElement(x, y);
+                }
+              }
+            ]
+          : [];
+
+      Menu.buildFromTemplate(contextMenu).popup({ window: this.settingWindow });
     });
   }
 }
