@@ -264,11 +264,15 @@ export default function Home(props: Props) {
               name="callShortcut"
               item={[
                 {
-                  value: 'Ctrl_Ctrl',
+                  value: 'none',
+                  label: '无'
+                },
+                {
+                  value: 'Ctrl+Ctrl',
                   label: '双击Ctrl'
                 },
                 {
-                  value: 'Win_Z',
+                  value: 'Option+Z',
                   label: 'Win+Z'
                 }
               ]}
@@ -288,6 +292,41 @@ export default function Home(props: Props) {
                   max: 128,
                   min: 8,
                   unit: 'px'
+                },
+                {
+                  label: '不透明度',
+                  name: 'iconOpacity',
+                  max: 100,
+                  min: 0,
+                  unit: '%'
+                },
+                {
+                  label: '缩放',
+                  name: 'iconZoom',
+                  max: 32,
+                  min: 0,
+                  unit: 'px'
+                },
+                {
+                  label: '间距',
+                  name: 'iconSpacing',
+                  max: 64,
+                  min: 0,
+                  unit: 'px'
+                }
+              ]}
+            />
+          </Grid>
+          <Grid item xs={6} className="flex content-center">
+            <FormSlider
+              legend="面板设置"
+              item={[
+                {
+                  label: '不透明度',
+                  name: 'panelOpacity',
+                  max: 100,
+                  min: 0,
+                  unit: '%'
                 }
               ]}
             />

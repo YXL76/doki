@@ -1,4 +1,4 @@
-import { switchValue as initialState } from '../../initialState';
+import { switchValue as initialState } from '../initialState';
 import {
   SET_SWITCH_VALUE,
   SwitchValueActionTypes

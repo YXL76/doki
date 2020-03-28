@@ -3,12 +3,12 @@ import thunk from 'redux-thunk';
 import { createHashHistory } from 'history';
 import { routerMiddleware, routerActions } from 'connected-react-router';
 import { createLogger } from 'redux-logger';
-import * as tabIndexActions from '../actions/tabIndex';
-import * as switchValueActions from '../actions/switchValue';
-import * as radioValueActions from '../actions/radioValue';
-import * as sliderValueActions from '../actions/sliderValue';
-import createRootReducer from '../reducers';
-import { StateType } from '../reducers/types';
+import * as tabIndexActions from '../../actions/tabIndex';
+import * as switchValueActions from '../../actions/switchValue';
+import * as radioValueActions from '../../actions/radioValue';
+import * as sliderValueActions from '../../actions/sliderValue';
+import createRootReducer from '../../reducers';
+import { StateType } from '../../reducers/types';
 
 declare global {
   interface Window {
@@ -78,9 +78,9 @@ const configureStore = (initialState?: StateType) => {
 
   if (module.hot) {
     module.hot.accept(
-      '../reducers',
+      '../../reducers',
       // eslint-disable-next-line global-require
-      () => store.replaceReducer(require('../reducers').default)
+      () => store.replaceReducer(require('../../reducers').default)
     );
   }
 

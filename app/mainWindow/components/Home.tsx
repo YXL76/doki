@@ -1,29 +1,9 @@
-import path from 'path';
 import React from 'react';
 import { shell } from 'electron';
 import '../app.global.scss';
-import fs from 'fs';
 import styles from './Home.scss';
 
-type Props = {
-  appdataPath: number;
-};
-
-/* const appdataFolder = path.join(
-  process.env.LOCALAPPDATA ||
-    process.env.APPDATA ||
-    process.env.HOME ||
-    process.env.HOMEPATH ||
-    process.env.USERPROFILE ||
-    __dirname,
-  'doki'
-);
-
-const appdataSettingFile = path.join(appdataFolder, 'setting.json'); */
-
-export default function Home(props: Props) {
-  const { appdataPath } = props;
-
+export default function Home() {
   const icon = [
     {
       src: 'C:\\Users\\chenx\\Desktop\\test.png',
@@ -44,14 +24,7 @@ export default function Home(props: Props) {
       key={item.uuid}
       type="button"
       onClick={() => {
-        console.log(appdataPath);
-        // shell.openItem(item.target);
-        /* fs.readdir(appdataFolder, err => {
-          if (err) {
-            fs.mkdirSync(appdataFolder);
-          }
-          fs.writeFileSync(appdataSettingFile, '');
-        }); */
+        shell.openItem(item.target);
       }}
     >
       <img

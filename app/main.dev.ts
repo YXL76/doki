@@ -9,10 +9,11 @@
  * `./app/main.prod.js` using webpack. This gives us some performance wins.
  */
 import path from 'path';
-import { app, BrowserWindow, screen } from 'electron';
+import { app, BrowserWindow, screen, globalShortcut, dialog } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import MenuBuilder from './menu';
+import { settings } from './initialState';
 
 export default class AppUpdater {
   constructor() {
@@ -86,8 +87,8 @@ const createWindow = async () => {
   });
 
   settingWindow = new BrowserWindow({
-    width: 900,
-    height: 600,
+    width: 600,
+    height: 400,
     fullscreenable: false,
     show: false,
     parent: mainWindow,
@@ -147,6 +148,37 @@ const createWindow = async () => {
   new AppUpdater();
 };
 
+export function SetSize() {}
+
+export function SetPosition(win: BrowserWindow) {
+  const { x, y } = (() => {
+    switch (settings.general.panelPosition) {
+      case 'top':
+        return { x: 64, y: 64 };
+      default:
+        return { x: 64, y: 64 };
+    }
+  })();
+  win.setPosition(x, y);
+}
+
+export function SetShortcut() {
+  const shortcut = settings.general.callShortcut;
+
+  globalShortcut.unregisterAll();
+
+  if (shortcut !== 'none') {
+    const ret = globalShortcut.register(shortcut, () => {
+      mainWindow?.moveTop();
+      mainWindow?.focus();
+    });
+
+    if (!ret) {
+      dialog.showErrorBox('错误', '快捷键绑定失败');
+    }
+  }
+}
+
 /**
  * Add event listeners...
  */
@@ -159,7 +191,15 @@ app.on('window-all-closed', () => {
   }
 });
 
-app.on('ready', createWindow);
+app.on('ready', () => {
+  createWindow()
+    .then(SetShortcut)
+    .catch(() => {});
+});
+
+app.on('will-quit', () => {
+  globalShortcut.unregisterAll();
+});
 
 app.on('activate', () => {
   // On macOS it's common to re-create a window in the app when the

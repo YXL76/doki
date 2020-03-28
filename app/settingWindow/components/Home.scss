@@ -4,11 +4,13 @@
 
 .slider {
   &-width {
+    box-sizing: border-box;
     width: 100%;
+    padding: 0 4px;
   }
 
   &-label-width {
-    width: 100px;
+    width: 128px;
     text-align: center;
   }
 }

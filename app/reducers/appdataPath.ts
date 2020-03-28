@@ -1,5 +1,5 @@
 import { Action } from 'redux';
-import { appdataPath as initialState } from '../../initialState';
+import { appdataPath as initialState } from '../initialState';
 
 export default function appdataPath(
   state = initialState,

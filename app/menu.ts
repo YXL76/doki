@@ -23,7 +23,12 @@ export default class MenuBuilder {
 
   buildMenu() {
     this.buildMainWindowContextMenu();
-    this.buildSettingWindowContextMenu();
+    if (
+      process.env.NODE_ENV === 'development' ||
+      process.env.DEBUG_PROD === 'true'
+    ) {
+      this.buildSettingWindowContextMenu();
+    }
 
     const menu = Menu.buildFromTemplate([]);
     Menu.setApplicationMenu(menu);
@@ -82,18 +87,14 @@ export default class MenuBuilder {
     this.settingWindow.webContents.on('context-menu', (_, props) => {
       const { x, y } = props;
 
-      const contextMenu =
-        process.env.NODE_ENV === 'development' ||
-        process.env.DEBUG_PROD === 'true'
-          ? [
-              {
-                label: 'Inspect element',
-                click: () => {
-                  this.settingWindow.webContents.inspectElement(x, y);
-                }
-              }
-            ]
-          : [];
+      const contextMenu = [
+        {
+          label: 'Inspect element',
+          click: () => {
+            this.settingWindow.webContents.inspectElement(x, y);
+          }
+        }
+      ];
 
       Menu.buildFromTemplate(contextMenu).popup({ window: this.settingWindow });
     });

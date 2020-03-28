@@ -1,12 +1,10 @@
 import { bindActionCreators, Dispatch } from 'redux';
 import { connect } from 'react-redux';
 import Home from '../components/Home';
-import { StateType } from '../reducers/types';
+import { StateType } from '../../reducers/types';
 
 function mapStateToProps(state: StateType) {
-  return {
-    appdataPath: state.appdataPath
-  };
+  return {};
 }
 
 function mapDispatchToProps(dispatch: Dispatch) {

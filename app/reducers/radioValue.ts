@@ -1,4 +1,4 @@
-import { radioValue as initialState } from '../../initialState';
+import { radioValue as initialState } from '../initialState';
 import { SET_RADIO_VALUE, RadioValueActionTypes } from '../actions/radioValue';
 
 export default function switchValue(

@@ -1,4 +1,4 @@
-import { sliderValue as initialState } from '../../initialState';
+import { sliderValue as initialState } from '../initialState';
 import {
   SET_SLIDER_VALUE,
   SliderValueActionTypes

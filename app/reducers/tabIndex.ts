@@ -1,4 +1,4 @@
-import { tabIndex as initialState } from '../../initialState';
+import { tabIndex as initialState } from '../initialState';
 import { SET_TAB_INDEX, TabIndexActionTypes } from '../actions/tabIndex';
 
 export default function appdataPath(
