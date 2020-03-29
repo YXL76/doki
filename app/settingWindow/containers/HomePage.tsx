@@ -3,17 +3,28 @@ import { connect } from 'react-redux';
 import Home from '../components/Home';
 import { StateType } from '../../reducers/types';
 import setTabIndex from '../../actions/tabIndex';
-import setSwitchValue from '../../actions/switchValue';
-import setRadioValue from '../../actions/radioValue';
-import setSliderValue from '../../actions/sliderValue';
+import setSettings from '../../actions/settings';
 
 function mapStateToProps(state: StateType) {
   return {
-    appdataPath: state.appdataPath,
     tabIndex: state.tabIndex,
-    switchValue: state.switchValue,
-    radioValue: state.radioValue,
-    sliderValue: state.sliderValue
+    settings: state.settings,
+    switchValue: {
+      autostart: state.settings.autostart,
+      notification: state.settings.notification
+    },
+    radioValue: {
+      panelPosition: state.settings.panelPosition,
+      panelLevel: state.settings.panelLevel,
+      callShortcut: state.settings.callShortcut
+    },
+    sliderValue: {
+      iconSize: state.settings.iconSize,
+      iconOpacity: state.settings.iconOpacity,
+      iconZoom: state.settings.iconZoom,
+      iconSpacing: state.settings.iconSpacing,
+      panelOpacity: state.settings.panelOpacity
+    }
   };
 }
 
@@ -21,9 +32,7 @@ function mapDispatchToProps(dispatch: Dispatch) {
   return bindActionCreators(
     {
       setTabIndex,
-      setSwitchValue,
-      setRadioValue,
-      setSliderValue
+      setSettings
     },
     dispatch
   );

@@ -12,8 +12,8 @@ import path from 'path';
 import { app, BrowserWindow, screen, globalShortcut, dialog } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
+import { readSetting } from './initialState';
 import MenuBuilder from './menu';
-import { settings } from './initialState';
 
 export default class AppUpdater {
   constructor() {
@@ -25,6 +25,35 @@ export default class AppUpdater {
 
 let mainWindow: BrowserWindow | null = null;
 let settingWindow: BrowserWindow | null = null;
+
+function SetShortcut(shortcut: string) {
+  globalShortcut.unregisterAll();
+
+  if (shortcut !== 'none') {
+    const ret = globalShortcut.register(shortcut, () => {
+      mainWindow?.moveTop();
+      mainWindow?.focus();
+    });
+
+    if (!ret) {
+      dialog.showErrorBox('错误', '快捷键绑定失败');
+    }
+  }
+}
+
+function SetSize() {}
+
+function SetPosition(panelPosition) {
+  const { x, y } = (() => {
+    switch (panelPosition) {
+      case 'top':
+        return { x: 64, y: 64 };
+      default:
+        return { x: 64, y: 64 };
+    }
+  })();
+  mainWindow?.setPosition(x, y);
+}
 
 if (process.env.NODE_ENV === 'production') {
   const sourceMapSupport = require('source-map-support');
@@ -87,8 +116,8 @@ const createWindow = async () => {
   });
 
   settingWindow = new BrowserWindow({
-    width: 600,
-    height: 400,
+    width: 720,
+    height: 600,
     fullscreenable: false,
     show: false,
     parent: mainWindow,
@@ -129,6 +158,10 @@ const createWindow = async () => {
   settingWindow.on('close', event => {
     event.preventDefault();
     settingWindow?.hide();
+    mainWindow?.reload();
+    settingWindow?.reload();
+    const settings = readSetting();
+    SetShortcut(settings.callShortcut);
   });
 
   mainWindow.on('closed', () => {
@@ -148,37 +181,6 @@ const createWindow = async () => {
   new AppUpdater();
 };
 
-export function SetSize() {}
-
-export function SetPosition(win: BrowserWindow) {
-  const { x, y } = (() => {
-    switch (settings.general.panelPosition) {
-      case 'top':
-        return { x: 64, y: 64 };
-      default:
-        return { x: 64, y: 64 };
-    }
-  })();
-  win.setPosition(x, y);
-}
-
-export function SetShortcut() {
-  const shortcut = settings.general.callShortcut;
-
-  globalShortcut.unregisterAll();
-
-  if (shortcut !== 'none') {
-    const ret = globalShortcut.register(shortcut, () => {
-      mainWindow?.moveTop();
-      mainWindow?.focus();
-    });
-
-    if (!ret) {
-      dialog.showErrorBox('错误', '快捷键绑定失败');
-    }
-  }
-}
-
 /**
  * Add event listeners...
  */
@@ -192,9 +194,9 @@ app.on('window-all-closed', () => {
 });
 
 app.on('ready', () => {
-  createWindow()
-    .then(SetShortcut)
-    .catch(() => {});
+  createWindow();
+  const settings = readSetting();
+  SetShortcut(settings.callShortcut);
 });
 
 app.on('will-quit', () => {

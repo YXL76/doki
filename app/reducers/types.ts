@@ -1,11 +1,24 @@
 import { Dispatch as ReduxDispatch, Store as ReduxStore, Action } from 'redux';
 
+export type settingsType = {
+  // general
+  autostart: boolean;
+  notification: boolean;
+  panelPosition: string;
+  panelLevel: string;
+  callShortcut: string;
+  // personalization
+  iconSize: number;
+  iconOpacity: number;
+  iconZoom: number;
+  iconSpacing: number;
+  panelOpacity: number;
+  // icon
+};
+
 export type StateType = {
-  appdataPath: string;
   tabIndex: number;
-  switchValue: object;
-  radioValue: object;
-  sliderValue: object;
+  settings: settingsType;
 };
 
 export type GetState = () => StateType;

@@ -3,8 +3,10 @@ import thunk from 'redux-thunk';
 import { createHashHistory } from 'history';
 import { routerMiddleware, routerActions } from 'connected-react-router';
 import { createLogger } from 'redux-logger';
-import createRootReducer from '../../reducers';
-import { StateType } from '../../reducers/types';
+import * as tabIndexActions from '../actions/tabIndex';
+import * as settingsActions from '../actions/settings';
+import createRootReducer from '../reducers';
+import { StateType } from '../reducers/types';
 
 declare global {
   interface Window {
@@ -49,6 +51,8 @@ const configureStore = (initialState?: StateType) => {
 
   // Redux DevTools Configuration
   const actionCreators = {
+    ...tabIndexActions,
+    ...settingsActions,
     ...routerActions
   };
   // If Redux DevTools Extension is installed use it, otherwise use Redux compose
@@ -70,9 +74,9 @@ const configureStore = (initialState?: StateType) => {
 
   if (module.hot) {
     module.hot.accept(
-      '../../reducers',
+      '../reducers',
       // eslint-disable-next-line global-require
-      () => store.replaceReducer(require('../../reducers').default)
+      () => store.replaceReducer(require('../reducers').default)
     );
   }
 
