@@ -1,9 +1,9 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import React from 'react';
+import { ipcRenderer } from 'electron';
 import '../app.global.scss';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
-import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 import Box from '@material-ui/core/Box';
 import Grid from '@material-ui/core/Grid';
@@ -14,16 +14,12 @@ import Radio from '@material-ui/core/Radio';
 import RadioGroup from '@material-ui/core/RadioGroup';
 import Switch from '@material-ui/core/Switch';
 import Slider from '@material-ui/core/Slider';
-import fs from 'fs';
-import { settingsType } from '../../reducers/types';
 import styles from './Home.scss';
-import { settingPath } from '../../initialState';
 
 type Props = {
   setTabIndex: (arg0: number) => void;
   setSettings: (arg0: object) => void;
   tabIndex: number;
-  settings: settingsType;
   switchValue: object;
   radioValue: object;
   sliderValue: object;
@@ -34,7 +30,6 @@ export default function Home(props: Props) {
     setTabIndex,
     setSettings,
     tabIndex,
-    settings,
     switchValue,
     radioValue,
     sliderValue
@@ -45,20 +40,24 @@ export default function Home(props: Props) {
   };
 
   const handleSwitchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setSettings({ [event.target.name]: event.target.checked });
+    const _ = { [event.target.name]: event.target.checked };
+    setSettings(_);
+    ipcRenderer.send('SWToM-setS', _);
   };
 
   const handleRadioChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setSettings({
-      [event.target.name]: (event.target as HTMLInputElement).value
-    });
+    const _ = { [event.target.name]: (event.target as HTMLInputElement).value };
+    setSettings(_);
+    ipcRenderer.send('SWToM-setS', _);
   };
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleSliderChange = (event: any, newValue: number | number[]) => {
     if (event.target.attributes['aria-labelledby']) {
       const { value } = event.target.attributes['aria-labelledby'];
-      setSettings({ [value]: newValue });
+      const _ = { [value]: newValue };
+      setSettings(_);
+      ipcRenderer.send('SWToM-setS', _);
     }
   };
 
@@ -198,21 +197,6 @@ export default function Home(props: Props) {
     );
   }
 
-  function SaveButton() {
-    return (
-      <Button
-        variant="contained"
-        color="primary"
-        disableElevation
-        onClick={() => {
-          fs.writeFileSync(settingPath, JSON.stringify(settings), 'utf8');
-        }}
-      >
-        保存
-      </Button>
-    );
-  }
-
   return (
     <div>
       <Tabs
@@ -294,10 +278,6 @@ export default function Home(props: Props) {
               ]}
             />
           </Grid>
-          <Grid item xs={8} className="flex content-center" />
-          <Grid item xs={4} className="flex content-center">
-            <SaveButton />
-          </Grid>
         </Grid>
       </TabPanel>
       <TabPanel value={tabIndex} index={1} className={styles.root}>
@@ -350,10 +330,6 @@ export default function Home(props: Props) {
                 }
               ]}
             />
-          </Grid>
-          <Grid item xs={8} className="flex content-center" />
-          <Grid item xs={4} className="flex content-center">
-            <SaveButton />
           </Grid>
         </Grid>
       </TabPanel>

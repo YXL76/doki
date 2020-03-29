@@ -9,10 +9,17 @@
  * `./app/main.prod.js` using webpack. This gives us some performance wins.
  */
 import path from 'path';
-import { app, BrowserWindow, screen, globalShortcut, dialog } from 'electron';
+import {
+  app,
+  BrowserWindow,
+  screen,
+  globalShortcut,
+  dialog,
+  ipcMain
+} from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
-import { readSetting } from './initialState';
+import { readSetting, writeSetting } from './initialState';
 import MenuBuilder from './menu';
 
 export default class AppUpdater {
@@ -77,7 +84,61 @@ const installExtensions = async () => {
   ).catch(console.log);
 };
 
-const createWindow = async () => {
+const createSettingWindow = async () => {
+  if (
+    process.env.NODE_ENV === 'development' ||
+    process.env.DEBUG_PROD === 'true'
+  ) {
+    await installExtensions();
+  }
+
+  settingWindow = new BrowserWindow({
+    width: 720,
+    height: 600,
+    fullscreenable: false,
+    show: false,
+    parent: mainWindow as BrowserWindow,
+    modal: true,
+    autoHideMenuBar: true,
+    webPreferences:
+      process.env.NODE_ENV === 'development' || process.env.E2E_BUILD === 'true'
+        ? {
+            nodeIntegration: true
+          }
+        : {
+            preload: path.join(__dirname, 'dist/settingWindow.renderer.prod.js')
+          }
+  });
+
+  settingWindow.loadURL(`file://${__dirname}/settingWindow/app.html`);
+
+  // @TODO: Use 'ready-to-show' event
+  //        https://github.com/electron/electron/blob/master/docs/api/browser-window.md#using-ready-to-show-event
+  settingWindow.webContents.on('did-finish-load', () => {
+    if (!settingWindow) {
+      throw new Error('"settingWindow" is not defined');
+    }
+  });
+
+  settingWindow.on('close', event => {
+    event.preventDefault();
+    settingWindow?.hide();
+    const settings = readSetting();
+    SetShortcut(settings.callShortcut);
+  });
+
+  settingWindow.on('closed', () => {
+    settingWindow = null;
+  });
+
+  const menuBuilder = new MenuBuilder(
+    mainWindow as BrowserWindow,
+    settingWindow
+  );
+  menuBuilder.buildMenu();
+};
+
+const createMainWindow = async () => {
   if (
     process.env.NODE_ENV === 'development' ||
     process.env.DEBUG_PROD === 'true'
@@ -115,26 +176,7 @@ const createWindow = async () => {
           }
   });
 
-  settingWindow = new BrowserWindow({
-    width: 720,
-    height: 600,
-    fullscreenable: false,
-    show: false,
-    parent: mainWindow,
-    modal: true,
-    autoHideMenuBar: true,
-    webPreferences:
-      process.env.NODE_ENV === 'development' || process.env.E2E_BUILD === 'true'
-        ? {
-            nodeIntegration: true
-          }
-        : {
-            preload: path.join(__dirname, 'dist/settingWindow.renderer.prod.js')
-          }
-  });
-
   mainWindow.loadURL(`file://${__dirname}/mainWindow/app.html`);
-  settingWindow.loadURL(`file://${__dirname}/settingWindow/app.html`);
 
   // @TODO: Use 'ready-to-show' event
   //        https://github.com/electron/electron/blob/master/docs/api/browser-window.md#using-ready-to-show-event
@@ -142,6 +184,7 @@ const createWindow = async () => {
     if (!mainWindow) {
       throw new Error('"mainWindow" is not defined');
     }
+    createSettingWindow();
     if (process.env.START_MINIMIZED) {
       mainWindow.minimize();
     } else {
@@ -149,32 +192,10 @@ const createWindow = async () => {
     }
   });
 
-  settingWindow.webContents.on('did-finish-load', () => {
-    if (!settingWindow) {
-      throw new Error('"settingWindow" is not defined');
-    }
-  });
-
-  settingWindow.on('close', event => {
-    event.preventDefault();
-    settingWindow?.hide();
-    mainWindow?.reload();
-    settingWindow?.reload();
-    const settings = readSetting();
-    SetShortcut(settings.callShortcut);
-  });
-
   mainWindow.on('closed', () => {
     settingWindow?.destroy();
     mainWindow = null;
   });
-
-  settingWindow.on('closed', () => {
-    settingWindow = null;
-  });
-
-  const menuBuilder = new MenuBuilder(mainWindow, settingWindow);
-  menuBuilder.buildMenu();
 
   // Remove this if your app does not use auto updates
   // eslint-disable-next-line
@@ -194,9 +215,15 @@ app.on('window-all-closed', () => {
 });
 
 app.on('ready', () => {
-  createWindow();
+  createMainWindow();
   const settings = readSetting();
   SetShortcut(settings.callShortcut);
+
+  ipcMain.on('SWToM-setS', (_event, arg) => {
+    mainWindow?.webContents.send('MToMW-setS', arg);
+    const _ = readSetting();
+    writeSetting({ ..._, ...arg });
+  });
 });
 
 app.on('will-quit', () => {
@@ -206,5 +233,5 @@ app.on('will-quit', () => {
 app.on('activate', () => {
   // On macOS it's common to re-create a window in the app when the
   // dock icon is clicked and there are no other windows open.
-  if (mainWindow === null) createWindow();
+  if (mainWindow === null) createMainWindow();
 });

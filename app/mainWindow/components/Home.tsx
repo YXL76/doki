@@ -3,7 +3,13 @@ import { shell } from 'electron';
 import '../app.global.scss';
 import styles from './Home.scss';
 
-export default function Home() {
+type Props = {
+  switchValue: object;
+};
+
+export default function Home(props: Props) {
+  const { switchValue } = props;
+
   const icon = [
     {
       src: 'C:\\Users\\chenx\\Desktop\\test.png',
@@ -42,6 +48,7 @@ export default function Home() {
       data-tid="container"
     >
       {renderIcon}
+      <div>{JSON.stringify(switchValue)}</div>
     </div>
   );
 }

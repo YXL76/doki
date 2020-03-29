@@ -30,6 +30,10 @@ const appdataPath = path.join(
 
 export const settingPath = path.join(appdataPath, 'setting.json');
 
+export function writeSetting(_: object) {
+  fs.writeFileSync(settingPath, JSON.stringify(_), 'utf8');
+}
+
 export function readSetting() {
   try {
     fs.readdirSync(appdataPath);
@@ -41,6 +45,7 @@ export function readSetting() {
     const data = fs.readFileSync(settingPath, 'utf8');
     return { ...defaultSettings, ...JSON.parse(data) };
   } catch (err) {
+    writeSetting(defaultSettings);
     return defaultSettings;
   }
 }

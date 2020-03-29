@@ -11,4 +11,5 @@ export default function setSettings(item: object): SettingsActionTypes {
     item
   };
 }
+
 export type SettingsActionTypes = SetSettings;

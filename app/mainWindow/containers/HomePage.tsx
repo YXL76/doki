@@ -4,7 +4,12 @@ import Home from '../components/Home';
 import { StateType } from '../../reducers/types';
 
 function mapStateToProps(state: StateType) {
-  return {};
+  return {
+    switchValue: {
+      autostart: state.settings.autostart,
+      notification: state.settings.notification
+    }
+  };
 }
 
 function mapDispatchToProps(dispatch: Dispatch) {
